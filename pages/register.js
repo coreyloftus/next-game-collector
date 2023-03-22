@@ -1,18 +1,31 @@
 import Head from "next/head"
 import { app } from "@/firebase/config"
 import { useState } from "react"
-import { createUserWithEmailAndPassword } from "firebase/auth"
-import { getAuth } from "firebase/auth"
+import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth"
 import { useRouter } from "next/router"
 
 export default function Register() {
     const auth = getAuth()
+    const googleProvider = new GoogleAuthProvider()
+    const githubProvider = new GithubAuthProvider()
     const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
     const signUp = () => {
         createUserWithEmailAndPassword(auth, email, password).then(() => {
+            router.push("/home")
+        })
+    }
+    const googleSignUp = () => {
+        signInWithPopup(auth, googleProvider).then((res) => {
+            console.log(res.user)
+            router.push("/home")
+        })
+    }
+    const githubSignUp = () => {
+        signInWithPopup(auth, githubProvider).then((res) => {
+            console.log(res.user)
             router.push("/home")
         })
     }
@@ -25,10 +38,10 @@ export default function Register() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="text-center dark:bg-gray-500 p-4">
+            <main className="text-center p-4 dark:text-gray-50">
                 <h2 className="text-2xl font-bold p-4">Register Page</h2>
                 <div className="flex justify-center">
-                    <div className="flex flex-col w-72 items-end gap-6">
+                    <div className="flex flex-col w-72 items-center gap-6">
                         <input
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="email"
@@ -45,6 +58,18 @@ export default function Register() {
                         />
                         <button onClick={signUp} type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
                             Sign Up
+                        </button>
+                        <button
+                            onClick={googleSignUp}
+                            type="button"
+                            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                            Sign up with Google
+                        </button>
+                        <button
+                            onClick={githubSignUp}
+                            type="button"
+                            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                            Sign Up with Github
                         </button>
                     </div>
                 </div>

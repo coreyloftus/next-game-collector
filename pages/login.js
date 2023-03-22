@@ -12,7 +12,7 @@ export default function Login() {
             </Head>
 
             <main>
-                <h2 className="text-2xl font-bold">Login Page</h2>
+                <h2 className="text-2xl font-bold dark:text-gray-50">Login Page</h2>
             </main>
         </div>
     )
