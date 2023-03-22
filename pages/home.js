@@ -2,10 +2,19 @@ import Head from "next/head"
 import Image from "next/image"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
+import { useEffect } from "react"
+import { useRouter } from "next/router"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+    let router = useRouter()
+    useEffect(() => {
+        let token = sessionStorage.getItem("Token")
+        if (!token) {
+            router.push("/register")
+        }
+    }, [])
     return (
         <>
             <Head>
@@ -16,7 +25,7 @@ export default function Home() {
             </Head>
 
             <main>
-                <div className="text-3xl font-bold text-center">Index Here</div>
+                <div className="text-3xl font-bold text-center dark:text-gray-50">Home Page</div>
             </main>
         </>
     )
