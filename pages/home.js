@@ -6,7 +6,7 @@ import styles from "@/styles/Home.module.css"
 import { useEffect } from "react"
 import { useRouter } from "next/router"
 import { app, database } from "../firebase/config"
-import { collection, addDoc, getDoc, getDocs, doc, updateDoc } from "firebase/firestore"
+import { collection, addDoc, getDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,6 +25,7 @@ export default function Home() {
     // change the string to change databases
     const databaseRef = collection(database, "CRUD Data")
 
+    // CREATE
     // add data to database
     const addData = () => {
         addDoc(databaseRef, {
@@ -41,13 +42,17 @@ export default function Home() {
             })
     }
 
+    // get data's ID, name, age and store in state
+    // also renders update button due to state of setIsUpdate changing
     const getId = (id, name, age) => {
         setID(id)
         setName(name)
         setAge(age)
         setIsUpdate(true)
+        // console.log({ id: id, name: name, age: age })
     }
 
+    // READ
     // get all data from database
     const getData = async () => {
         await getDocs(databaseRef).then((res) => {
@@ -59,6 +64,7 @@ export default function Home() {
         })
     }
 
+    // UPDATE
     // update data
     const updateData = async () => {
         let fieldToEdit = doc(database, "CRUD Data", ID)
@@ -69,10 +75,27 @@ export default function Home() {
         })
             .then(() => {
                 console.log("Data updated")
+                getData()
                 setName("")
                 setAge("")
                 setID("")
                 setIsUpdate(false)
+            })
+            .catch((err) => {
+                console.error(err)
+            })
+    }
+
+    // DELETE
+    // deletes item from DB by ID
+    const deleteData = async (id) => {
+        // console.log({ id: ID, name: name, age: age })
+        console.log(`deleting ${id}`)
+        let fieldToEdit = doc(database, "CRUD Data", id)
+        console.log(fieldToEdit)
+        await deleteDoc(fieldToEdit)
+            .then(() => {
+                console.log("Deleted doc")
                 getData()
             })
             .catch((err) => {
@@ -80,6 +103,7 @@ export default function Home() {
             })
     }
 
+    // useEffect
     useEffect(() => {
         let token = sessionStorage.getItem("Token")
         if (token) {
@@ -120,11 +144,18 @@ export default function Home() {
                             />
 
                             {isUpdate ? (
-                                <button
-                                    className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
-                                    onClick={updateData}>
-                                    Update
-                                </button>
+                                <div>
+                                    <button
+                                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
+                                        onClick={updateData}>
+                                        Update
+                                    </button>
+                                    {/* <button
+                                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
+                                        onClick={deleteDoc}>
+                                        Delete
+                                    </button> */}
+                                </div>
                             ) : (
                                 <button className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900" onClick={addData}>
                                     ADD DATA
@@ -145,6 +176,11 @@ export default function Home() {
                                             className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
                                             onClick={() => getId(data.id, data.name, data.age)}>
                                             get ID
+                                        </button>
+                                        <button
+                                            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
+                                            onClick={() => deleteData(data.id)}>
+                                            delete
                                         </button>
                                     </div>
                                 )
