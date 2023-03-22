@@ -19,7 +19,7 @@ export default function Home() {
     const addData = () => {
         addDoc(databaseRef, {
             name: name,
-            age: age,
+            age: Number(age)
         })
         .then(() => {
             console.log("Data saved")
