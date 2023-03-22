@@ -1,14 +1,38 @@
 import Head from "next/head"
 import Image from "next/image"
+import { useState } from "react"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
 import { useEffect } from "react"
 import { useRouter } from "next/router"
+import { app, database } from "../firebase/config"
+import { collection, addDoc } from "firebase/firestore"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+    const [name, setName] = useState("")
+    const [age, setAge] = useState("")
+
+    const databaseRef = collection(database, "CRUD Data")
+
+    const addData = () => {
+        addDoc(databaseRef, {
+            name: name,
+            age: age,
+        })
+        .then(() => {
+            console.log("Data saved")
+            setName("")
+            setAge("")
+        })
+        .catch((err) => {
+            console.error(err)
+        })
+    }
+
     let router = useRouter()
+
     useEffect(() => {
         let token = sessionStorage.getItem("Token")
         if (!token) {
@@ -25,7 +49,30 @@ export default function Home() {
             </Head>
 
             <main>
-                <div className="text-3xl font-bold text-center dark:text-gray-50">Home Page</div>
+                <div className="grid place-items-center h-screen">
+                    <div className=" dark:text-gray-50">
+                        <p className="text-3xl font-bold text-center p-4">Home Page</p>
+                        <div className="">
+                            <input
+                                placeholder="name"
+                                className="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                onChange={(e) => setName(e.target.value)}
+                                value={name}
+                                type="text"
+                            />
+                            <input
+                                placeholder="age"
+                                className="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                onChange={(e) => setAge(e.target.value)}
+                                value={age}
+                                type="number"
+                            />
+                            <button className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900" onClick={addData}>
+                                ADD DATA
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </main>
         </>
     )
