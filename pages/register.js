@@ -1,11 +1,16 @@
 import Head from "next/head"
 import { app } from "@/firebase/config"
-import { useState } from "react"
+import { useState, createUserWithEmailAndPassword } from "react"
+import { getAuth } from "firebase/auth"
 
 export default function Register() {
+    const auth = getAuth()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
+    const signUp = () => {
+        createUserWithEmailAndPassword(auth, email, password).then(() => {})
+    }
     return (
         <div>
             <Head>
