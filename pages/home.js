@@ -6,17 +6,26 @@ import styles from "@/styles/Home.module.css"
 import { useEffect } from "react"
 import { useRouter } from "next/router"
 import { app, database } from "../firebase/config"
-import { collection, addDoc, getDoc, getDocs } from "firebase/firestore"
+import { collection, addDoc, getDoc, getDocs, doc, updateDoc } from "firebase/firestore"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export default function Home() {
+    let router = useRouter()
+
+    // useState variables
     const [name, setName] = useState("")
     const [age, setAge] = useState("")
     const [fireData, setFireData] = useState([])
+    const [isUpdate, setIsUpdate] = useState(false)
+    const [ID, setID] = useState(null)
 
+    // connects to firebase database with name "CRUD Data"
+    // if database doesn't exist, it gets created
+    // change the string to change databases
     const databaseRef = collection(database, "CRUD Data")
 
+    // add data to database
     const addData = () => {
         addDoc(databaseRef, {
             name: name,
@@ -32,6 +41,13 @@ export default function Home() {
             })
     }
 
+    const getId = (id, name, age) => {
+        setID(id)
+        setName(name)
+        setAge(age)
+        setIsUpdate(true)
+    }
+
     // get all data from database
     const getData = async () => {
         await getDocs(databaseRef).then((res) => {
@@ -43,7 +59,24 @@ export default function Home() {
         })
     }
 
-    let router = useRouter()
+    // update data
+    const updateData = async () => {
+        let fieldToEdit = doc(database, "CRUD Data", ID)
+        console.log(ID)
+        await updateDoc(fieldToEdit, {
+            name: name,
+            age: Number(age),
+        })
+            .then(() => {
+                console.log("Data updated")
+                setName("")
+                setAge("")
+                setID("")
+            })
+            .catch((err) => {
+                console.error(err)
+            })
+    }
 
     useEffect(() => {
         let token = sessionStorage.getItem("Token")
@@ -83,20 +116,34 @@ export default function Home() {
                                 value={age}
                                 type="number"
                             />
-                            <button className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900" onClick={addData}>
-                                ADD DATA
-                            </button>
+
+                            {isUpdate ? (
+                                <button
+                                    className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
+                                    onClick={updateData}>
+                                    Update
+                                </button>
+                            ) : (
+                                <button className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900" onClick={addData}>
+                                    ADD DATA
+                                </button>
+                            )}
                         </div>
                         <div>
                             {fireData.map((data) => {
                                 return (
-                                    <div className="p-2 flex justify-evenly">
-                                        <p className="text-xl">
+                                    <div key={data.id} className="p-2 flex justify-evenly">
+                                        <p className="text-xl font-bold">
                                             <span>{data.name}</span>
                                         </p>
                                         <p className="text-lg">
                                             <span>{data.age}</span>
                                         </p>
+                                        <button
+                                            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
+                                            onClick={() => getId(data.id, data.name, data.age)}>
+                                            get ID
+                                        </button>
                                     </div>
                                 )
                             })}
