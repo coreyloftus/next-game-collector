@@ -1,15 +1,20 @@
 import Head from "next/head"
 import { app } from "@/firebase/config"
-import { useState, createUserWithEmailAndPassword } from "react"
+import { useState } from "react"
+import { createUserWithEmailAndPassword } from "firebase/auth"
 import { getAuth } from "firebase/auth"
+import { useRouter } from "next/router"
 
 export default function Register() {
     const auth = getAuth()
+    const router = useRouter()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
     const signUp = () => {
-        createUserWithEmailAndPassword(auth, email, password).then(() => {})
+        createUserWithEmailAndPassword(auth, email, password).then(() => {
+            router.push("/home")
+        })
     }
     return (
         <div>
@@ -20,7 +25,7 @@ export default function Register() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="text-center dark:bg-gray-700 p-4">
+            <main className="text-center dark:bg-gray-500 p-4">
                 <h2 className="text-2xl font-bold p-4">Register Page</h2>
                 <div className="flex justify-center">
                     <div className="flex flex-col w-72 items-end gap-6">
@@ -29,13 +34,18 @@ export default function Register() {
                             placeholder="email"
                             onChange={(e) => setEmail(e.target.value)}
                             value={email}
+                            type="email"
                         />
                         <input
                             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             placeholder="password"
                             onChange={(e) => setPassword(e.target.value)}
                             value={password}
+                            type="password"
                         />
+                        <button onClick={signUp} type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                            Sign Up
+                        </button>
                     </div>
                 </div>
             </main>
