@@ -16,7 +16,7 @@ export default function Home() {
             </Head>
 
             <main>
-                <div className="text-3xl font-bold text-center">Home Page</div>
+                <div className="text-3xl font-bold text-center dark:bg-gray-700">Home Page</div>
             </main>
         </>
     )
