@@ -72,6 +72,8 @@ export default function Home() {
                 setName("")
                 setAge("")
                 setID("")
+                setIsUpdate(false)
+                getData()
             })
             .catch((err) => {
                 console.error(err)
