@@ -39,6 +39,7 @@ export default function Register() {
             router.push("/home")
         }
     }, [])
+    
     return (
         <div>
             <Head>
