@@ -1,6 +1,6 @@
 import Head from "next/head"
 import { app } from "@/firebase/config"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth"
 import { useRouter } from "next/router"
 
@@ -14,21 +14,31 @@ export default function Register() {
 
     const signUp = () => {
         createUserWithEmailAndPassword(auth, email, password).then(() => {
+            console.log(res.user)
+            sessionStorage.setItem("Token", res.user.accessToken)
             router.push("/home")
         })
     }
     const googleSignUp = () => {
         signInWithPopup(auth, googleProvider).then((res) => {
             console.log(res.user)
+            sessionStorage.setItem("Token", res.user.accessToken)
             router.push("/home")
         })
     }
     const githubSignUp = () => {
         signInWithPopup(auth, githubProvider).then((res) => {
             console.log(res.user)
+            sessionStorage.setItem("Token", res.user.accessToken)
             router.push("/home")
         })
     }
+    useEffect(() => {
+        let token = sessionStorage.getItem("Token")
+        if (token) {
+            router.push("/home")
+        }
+    }, [])
     return (
         <div>
             <Head>
@@ -56,19 +66,22 @@ export default function Register() {
                             value={password}
                             type="password"
                         />
-                        <button onClick={signUp} type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                        <button
+                            onClick={signUp}
+                            type="button"
+                            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
                             Sign Up
                         </button>
                         <button
                             onClick={googleSignUp}
                             type="button"
-                            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
                             Sign up with Google
                         </button>
                         <button
                             onClick={githubSignUp}
                             type="button"
-                            class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                            className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
                             Sign Up with Github
                         </button>
                     </div>
