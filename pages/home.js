@@ -25,6 +25,12 @@ export default function Home() {
     // change the string to change databases
     const databaseRef = collection(database, "CRUD Data")
 
+    // logout function
+    const logout = () => {
+        sessionStorage.removeItem("Token")
+        router.push("/register")
+    }
+
     // CREATE
     // add data to database
     const addData = () => {
@@ -34,6 +40,7 @@ export default function Home() {
         })
             .then(() => {
                 console.log("Data saved")
+                getData()
                 setName("")
                 setAge("")
             })
@@ -89,10 +96,7 @@ export default function Home() {
     // DELETE
     // deletes item from DB by ID
     const deleteData = async (id) => {
-        // console.log({ id: ID, name: name, age: age })
-        console.log(`deleting ${id}`)
         let fieldToEdit = doc(database, "CRUD Data", id)
-        console.log(fieldToEdit)
         await deleteDoc(fieldToEdit)
             .then(() => {
                 console.log("Deleted doc")
@@ -127,6 +131,9 @@ export default function Home() {
                 <div className="grid place-items-center h-screen">
                     <div className=" dark:text-gray-50">
                         <p className="text-3xl font-bold text-center p-4">Home Page</p>
+                        <button onClick={logout} className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
+                            Log Out
+                        </button>
                         <div className="">
                             <input
                                 placeholder="name"
@@ -150,11 +157,6 @@ export default function Home() {
                                         onClick={updateData}>
                                         Update
                                     </button>
-                                    {/* <button
-                                        className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900"
-                                        onClick={deleteDoc}>
-                                        Delete
-                                    </button> */}
                                 </div>
                             ) : (
                                 <button className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900" onClick={addData}>
@@ -165,7 +167,7 @@ export default function Home() {
                         <div>
                             {fireData.map((data) => {
                                 return (
-                                    <div key={data.id} className="p-2 flex justify-evenly">
+                                    <div key={data.id} className="p-2 grid grid-cols-2 border">
                                         <p className="text-xl font-bold">
                                             <span>{data.name}</span>
                                         </p>
