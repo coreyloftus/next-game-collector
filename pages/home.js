@@ -1,11 +1,11 @@
 import Head from "next/head"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Inter } from "next/font/google"
 import styles from "@/styles/Home.module.css"
-import { useEffect } from "react"
 import { useRouter } from "next/router"
 import { app, database } from "../firebase/config"
+import { getAuth } from "firebase/auth"
 import { collection, addDoc, getDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -19,6 +19,19 @@ export default function Home() {
     const [fireData, setFireData] = useState([])
     const [isUpdate, setIsUpdate] = useState(false)
     const [ID, setID] = useState(null)
+
+    useEffect(() => {
+        const auth = getAuth()
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("Logged in as:", user.email)
+            } else {
+                console.log("Not logged in")
+            }
+        })
+
+        return unsubscribe
+    }, [])
 
     // connects to firebase database with name "CRUD Data"
     // if database doesn't exist, it gets created
@@ -114,7 +127,7 @@ export default function Home() {
             getData()
         }
         if (!token) {
-            router.push("/register")
+            router.push("/login")
         }
     }, [])
 
