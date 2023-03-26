@@ -19,17 +19,19 @@ export default function Home() {
     const [fireData, setFireData] = useState([])
     const [isUpdate, setIsUpdate] = useState(false)
     const [ID, setID] = useState(null)
+    const [userEmail, setUserEmail] = useState(null)
 
     useEffect(() => {
         const auth = getAuth()
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
                 console.log("Logged in as:", user.email)
+                setUserEmail(user.email)
             } else {
+                setUserEmail(null)
                 console.log("Not logged in")
             }
         })
-
         return unsubscribe
     }, [])
 
@@ -144,6 +146,7 @@ export default function Home() {
                 <div className="grid place-items-center h-screen">
                     <div className=" dark:text-gray-50">
                         <p className="text-3xl font-bold text-center p-4">Home Page</p>
+                        <p>logged in as {userEmail}</p>
                         <button onClick={logout} className="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:focus:ring-yellow-900">
                             Log Out
                         </button>
