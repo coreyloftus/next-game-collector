@@ -49,7 +49,7 @@ export default function Register() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main className="text-center p-4 dark:text-gray-50 grid place-items-center h-screen">
+            <main className="text-center p-4 dark:text-gray-50 dark:bg-slate-500 grid place-items-center h-screen">
                 <div>
                     <h2 className="text-2xl font-bold p-4">Register Page</h2>
                     <div className="flex justify-center">

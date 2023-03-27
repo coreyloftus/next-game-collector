@@ -121,17 +121,6 @@ export default function Home() {
             })
     }
 
-    // useEffect
-    useEffect(() => {
-        let token = sessionStorage.getItem("Token")
-        if (token) {
-            getData()
-        }
-        if (!token) {
-            router.push("/login")
-        }
-    }, [])
-
     return (
         <>
             <Head>
@@ -141,7 +130,7 @@ export default function Home() {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            <main>
+            <main className="dark:bg-slate-800 bg-gray-50">
                 <div className="grid place-items-center h-screen">
                     <div className=" dark:text-gray-50">
                         <p className="text-3xl font-bold text-center p-4">Home Page</p>
